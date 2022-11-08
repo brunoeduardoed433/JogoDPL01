@@ -1,23 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
+    using UnityEngine.UI;
 
-    public class Player : MonoBehaviour
-{
+
+    public class Player : MonoBehaviour 
+{    
+
+    private int vida;
+    private int vidaMaxima = 3;
+
+    [SerializeField] Image vidaOn;
+    [SerializeField] Image vidaOff;
+
+    [SerializeField] Image vidaOn2;
+    [SerializeField] Image vidaOff2;
+
     public float Speed;
     public float JumpForce;
     public bool Jumping;
     private Rigidbody2D rig;
     Animator anim;
-
-    // Start is called before the first frame update
+    
     void Start()
     {
+        vida = vidaMaxima;
         rig = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         Move();
@@ -77,4 +88,56 @@ using UnityEngine;
             Jumping = true;
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if(col.gameObject.CompareTag("Inimigo"))
+        {
+          Dano();
+        }
 }
+
+     private void Dano()
+       {
+         vida -= 1;
+
+         if(vida == 2)
+         {
+           vidaOn2.enabled = true;
+           vidaOff2.enabled = false;
+         }
+            else
+         
+            {
+                vidaOn2.enabled = false;
+                vidaOff2.enabled = true;
+            }
+
+            if(vida == 1)
+            {
+               vidaOn2.enabled = true;
+               vidaOff2.enabled = false;
+
+               vidaOn.enabled = true;
+               vidaOff.enabled = false;
+            }
+            else
+            {
+             vidaOn.enabled = false;
+             vidaOff.enabled = true;
+            }
+        }
+        public void AddHealth(float _value)
+        {
+         Dano();
+        }
+}
+
+
+
+
+
+
+
+
+    

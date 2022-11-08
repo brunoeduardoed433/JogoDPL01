@@ -6,11 +6,13 @@ TagManager:
   tags:
   - ground
   - Damage 01
+  - Inimigo
+  - Health
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Health
   - Water
   - UI
   - 
