@@ -2,19 +2,28 @@
     using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.UI;
+    using UnityEngine.SceneManagement;
 
 
     public class Player : MonoBehaviour 
 {    
 
-    private int vida;
+    public static int vida;
     private int vidaMaxima = 3;
 
-    [SerializeField] Image vidaOn;
-    [SerializeField] Image vidaOff;
+    public Button restartButton;
 
-    [SerializeField] Image vidaOn2;
-    [SerializeField] Image vidaOff2;
+
+    [SerializeField] Image CoracaoVazio2;
+    [SerializeField] Image CoracaoCheio2;
+
+    [SerializeField] Image CoracaoVazio3;
+    [SerializeField] Image CoracaoCheio3;
+
+    [SerializeField] Image CoracaoVazio1;
+    [SerializeField] Image CoracaoCheio1;
+
+    [SerializeField] Image Gameover;
 
     public float Speed;
     public float JumpForce;
@@ -22,18 +31,33 @@
     private Rigidbody2D rig;
     Animator anim;
     
+    public void RestartGame(){
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name); 
+    }
+
     void Start()
     {
+        Gameover.enabled = false;
         vida = vidaMaxima;
         rig = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        restartButton.gameObject.SetActive(false); 
     }
 
     void Update()
     {
+        estouJogando();
+    }
+    
+    public void estouJogando(){
+        if(vida!=0){
         Move();
         Jump();
+        }
     }
+    
+
+
 
     void Move()
     {
@@ -94,43 +118,76 @@
         if(col.gameObject.CompareTag("Inimigo"))
         {
           Dano();
+          Debug.Log(vida);
+        }
+        if(col.gameObject.CompareTag("Health"))
+        {
+          Destroy(col.gameObject);
+          recuperaVida();
         }
 }
 
+     private void recuperaVida(){
+        if(vida !=3 && vida >0 ){
+            vida++;
+            Debug.Log(vida);
+            atualizaCoracao();
+        }
+
+     } 
+     private void atualizaCoracao(){
+            switch(vida){
+                case 3:
+                CoracaoCheio1.enabled = true;
+                CoracaoCheio2.enabled = true;
+                CoracaoCheio3.enabled = true;
+                CoracaoVazio1.enabled = false;
+                CoracaoVazio2.enabled = false;
+                CoracaoVazio3.enabled = false;
+                break;
+            case 2:
+                CoracaoCheio1.enabled = true;
+                CoracaoCheio2.enabled = true;
+                CoracaoCheio3.enabled = false;
+                CoracaoVazio1.enabled = false;
+                CoracaoVazio2.enabled = false;
+                CoracaoVazio3.enabled = true;
+                break;
+            
+                case 1:
+                CoracaoCheio1.enabled = true;
+                CoracaoCheio2.enabled = false;
+                CoracaoCheio3.enabled = false;
+                CoracaoVazio1.enabled = false;
+                CoracaoVazio2.enabled = true;
+                CoracaoVazio3.enabled = true;
+                break;
+            
+                case 0:
+                CoracaoCheio1.enabled = false;
+                CoracaoCheio2.enabled = false;
+                CoracaoCheio3.enabled = false;
+                CoracaoVazio1.enabled = true;
+                CoracaoVazio2.enabled = true;
+                CoracaoVazio3.enabled = true;
+                Debug.Log("GAME OVER!!!");
+                restartButton.gameObject.SetActive(true); 
+                Gameover.enabled = true;
+                restartButton.onClick.AddListener(RestartGame);
+                break;
+            }
+            
+        
+
+     }
+
      private void Dano()
        {
+         if(vida<=3 && vida>0){
          vida -= 1;
-
-         if(vida == 2)
-         {
-           vidaOn2.enabled = true;
-           vidaOff2.enabled = false;
+         atualizaCoracao();
          }
-            else
-         
-            {
-                vidaOn2.enabled = false;
-                vidaOff2.enabled = true;
-            }
-
-            if(vida == 1)
-            {
-               vidaOn2.enabled = true;
-               vidaOff2.enabled = false;
-
-               vidaOn.enabled = true;
-               vidaOff.enabled = false;
-            }
-            else
-            {
-             vidaOn.enabled = false;
-             vidaOff.enabled = true;
-            }
-        }
-        public void AddHealth(float _value)
-        {
-         Dano();
-        }
+        } 
 }
 
 
